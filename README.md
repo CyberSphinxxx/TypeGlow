@@ -22,3 +22,11 @@
    ```bash
    open index.html
    ```
+## How to Play
+1. Choose a difficulty level (easy, medium, hard, or impossible) from the top of the screen.
+2. The target text will appear in the center of the screen.
+3. Start typing in the input box.
+   - Correct characters will be highlighted in green.
+   - Incorrect characters will be highlighted in red.
+4. Once you've typed the entire text correctly, a "Congratulations!" message will appear.
+5. Click the Reset button to play again.
