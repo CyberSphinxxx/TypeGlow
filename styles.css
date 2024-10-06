@@ -123,3 +123,27 @@ h1:hover {
 .hidden {
     display: none;
 }
+
+.footer {
+    position: fixed;
+    bottom: 10px; 
+    right: 10px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.footer_github {
+    position: fixed;
+    bottom: 10px; 
+    left: 10px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+}
