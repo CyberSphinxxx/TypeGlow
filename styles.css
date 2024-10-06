@@ -1,34 +1,57 @@
 body {
     font-family: 'Noto Serif Oriya', serif;
-    background-color: #f4f4f4;
+    background-color: #282c34;
+    color: #ffffff;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
-  }
-  
-  .container {
+}
+
+.container {
     text-align: center;
-  }
-  
-  #targetText {
-    font-size: 2rem;
+    background-color: #3a3f47;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+
+h1 {
+    font-size: 3rem;
     margin-bottom: 20px;
-  }
-  
-  #userInput {
-    padding: 10px;
-    font-size: 1rem;
-    width: 300px;
-  }
-  
-  .correct {
-    color: green;
-    text-shadow: 0 0 5px lime;
-  }
-  
-  .incorrect {
-    color: red;
-  }
-  
+    color: #f1c40f;
+}
+
+#targetText {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+}
+
+#userInput {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+}
+
+.click-instruction {
+    font-size: 1.2rem;
+    color: #ffffff;
+    margin-top: 15px;
+}
+
+.correct {
+    color: #00ff6a;
+    text-shadow: 0 0 8px #00ff6a;
+}
+
+.incorrect {
+    color: #ff3333;
+    text-shadow: 0 0 8px #ff3333;
+}
+
+.correct, .incorrect {
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+}

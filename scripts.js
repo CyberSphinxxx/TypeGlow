@@ -24,3 +24,8 @@ userInput.addEventListener('input', () => {
 
   targetText.innerHTML = formattedText;
 });
+
+// Function to focus on the input when the container is clicked
+function focusInput() {
+  userInput.focus();
+}

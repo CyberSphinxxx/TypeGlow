@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TypeGlow</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Oriya&display=swap" rel="stylesheet">
 </head>
 <body>
-    
-    <div class="container">
-        <h1>Typing Practice</h1>
+
+    <div class="container" onclick="focusInput()">
+        <h1>TypeGlow</h1>
         <p id="targetText">hello world</p>
-        <input type="text" id="userInput" placeholder="Start typing here..." />
+        <input type="text" id="userInput" autofocus />
+        <p class="click-instruction">Click here to start typing!</p>
     </div>
 
     <script src="scripts.js"></script>
