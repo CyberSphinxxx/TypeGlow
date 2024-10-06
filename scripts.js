@@ -4,15 +4,46 @@ const congratulations = document.getElementById('congratulations');
 const clickInstruction = document.getElementById('clickInstruction');
 const resetButton = document.getElementById('resetButton');
 
-// Define texts for each level
-const texts = {
-    easy: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-    medium: 'The quick brown fox jumps over the lazy dog.',
-    hard: 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
-    impossible: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.'
+const words = {
+    easy: [
+        'apple', 'banana', 'cat', 'dog', 'elephant', 
+        'fish', 'grape', 'hat', 'igloo', 'juice'
+    ],
+    medium: [
+        'cucumber', 'tomato', 'computer', 'internet', 
+        'keyboard', 'mouse', 'window', 'software', 
+        'programming', 'algorithm'
+    ],
+    hard: [
+        'extraordinary', 'communication', 'development', 
+        'unbelievable', 'conventional', 'mathematics', 
+        'revolutionary', 'understanding', 'experimental', 
+        'comprehension'
+    ],
+    impossible: [
+        'incomprehensibilities', 'overcompensating', 
+        'disproportionately', 'electroencephalography', 
+        'interdisciplinary', 'microarchitecture', 
+        'counterproductive', 'disestablishmentarianism', 
+        'psychophysiological', 'electromagnetism'
+    ]
 };
 
-let originalText = texts.easy; // Set default text
+let originalText = 'Choose a Level to Start Playing'; // Set default text
+
+// Function to get random words from the selected level
+function getRandomWords(level) {
+    const levelWords = words[level];
+    const numberOfWords = level === 'easy' ? 10 : level === 'medium' ? 12 : level === 'hard' ? 15 : 20;
+
+    // Shuffle the words array
+    const shuffledWords = levelWords.sort(() => 0.5 - Math.random());
+    
+    // Get the first 'numberOfWords' from the shuffled array
+    const randomWords = shuffledWords.slice(0, numberOfWords).join(' ');
+
+    return randomWords;
+}
 
 // Function to update the displayed text based on user input
 function updateText(inputText) {
@@ -39,8 +70,7 @@ function updateText(inputText) {
 
 // Function to check if user has completed typing the text
 function checkCompletion(inputText) {
-    // Trim the inputText to avoid issues with extra spaces
-    if (inputText.trim() === originalText) {
+    if (inputText === originalText) {
         congratulations.classList.remove('hidden');
         resetButton.classList.remove('hidden');
     }
@@ -61,7 +91,7 @@ document.querySelectorAll('.level').forEach(level => {
 
 // Function to update the level and text
 function updateLevel(level) {
-    originalText = texts[level]; // Update the original text based on selected level
+    originalText = getRandomWords(level); // Get random words based on selected level
     targetText.innerHTML = ''; // Clear the displayed text
     userInput.value = ''; // Clear the input
     congratulations.classList.add('hidden'); // Hide the congratulations message
@@ -69,9 +99,7 @@ function updateLevel(level) {
     clickInstruction.style.display = 'block'; // Show the click instruction
 
     // Reset text display
-    for (let i = 0; i < originalText.length; i++) {
-        targetText.innerHTML += originalText[i];
-    }
+    targetText.innerHTML = originalText; // Set the new target text
 }
 
 // Event listener for text input
