@@ -10,6 +10,20 @@ body {
     margin: 0;
 }
 
+h1 {
+    font-size: 3rem;
+    margin: 0;
+    color: #444; 
+    position: absolute; 
+    top: 20px; 
+    left: 20px; 
+    transition: ease-out 0.5s;
+}
+h1:hover{
+    color: gold;
+    transition: ease-in-out 0.5s;
+}
+
 .container {
     text-align: center;
     background-color: #ffffff;
