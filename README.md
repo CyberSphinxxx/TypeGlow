@@ -8,3 +8,17 @@
 - **Reset Functionality**: After finishing, you can reset the game and try again.
 - **Click to Start**: Simple and intuitive start by clicking anywhere in the typing container.
 - **Multiple Difficulty Levels**: Each level offers different texts of increasing difficulty.
+
+## Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/TypeGlow.git
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd TypeGlow
+   ```
+3. Open `index.html` in your browser to start playing:
+   ```bash
+   open index.html
+   ```
