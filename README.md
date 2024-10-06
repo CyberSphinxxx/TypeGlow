@@ -30,3 +30,9 @@
    - Incorrect characters will be highlighted in red.
 4. Once you've typed the entire text correctly, a "Congratulations!" message will appear.
 5. Click the Reset button to play again.
+
+## Technologies Used
+- **HTML:** For structuring the webpage.
+- **CSS:** For styling the application, including animations and responsive design.
+- **JavaScript:** For game logic and real-time text checking.
+- **Google Fonts:** Custom fonts for a better aesthetic.
