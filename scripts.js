@@ -4,69 +4,70 @@ const originalText = 'Hello World!';
 const congratulations = document.getElementById('congratulations');
 const clickInstruction = document.getElementById('clickInstruction');
 
-// Event Listener for Input
-userInput.addEventListener('input', () => {
-  const inputText = userInput.value;
-  let formattedText = '';
-  
-  // Track the current letter index
-  const currentIndex = inputText.length;
+// Function to update the displayed text based on user input
+function updateText(inputText) {
+    let formattedText = '';
+    const currentIndex = inputText.length;
 
-  for (let i = 0; i < originalText.length; i++) {
-    if (i < currentIndex) {
-      if (inputText[i] === originalText[i]) {
-        formattedText += `<span class="correct">${originalText[i]}</span>`;
-      }
-      
-      else {
-        formattedText += `<span class="incorrect">${originalText[i]}</span>`;
-      }
+    for (let i = 0; i < originalText.length; i++) {
+        if (i < currentIndex) {
+            formattedText += inputText[i] === originalText[i] 
+                ? `<span class="correct">${originalText[i]}</span>` 
+                : `<span class="incorrect">${originalText[i]}</span>`;
+        }
+        
+        else if (i === currentIndex) {
+            formattedText += `<span class="current">${originalText[i]}</span>`;
+        }
+        
+        else {
+            formattedText += originalText[i];
+        }
     }
-    
-    else if (i === currentIndex) {
-      // Highlight the current letter being typed
-      formattedText += `<span class="current">${originalText[i]}</span>`;
+    targetText.innerHTML = formattedText;
+}
+
+// Function to check if user has completed typing the text
+function checkCompletion(inputText) {
+    if (inputText === originalText) {
+        congratulations.classList.remove('hidden');
     }
     
     else {
-      formattedText += originalText[i];
+        congratulations.classList.add('hidden');
     }
-  }
+}
 
-  targetText.innerHTML = formattedText;
-
-  // Check if the user has finished typing the text
-  if (inputText === originalText) {
-    congratulations.classList.remove('hidden'); // Show the congratulatory message
-  }
-  
-  else {
-    congratulations.classList.add('hidden'); // Hide it if not complete
-  }
+// Event listener for text input
+userInput.addEventListener('input', () => {
+    const inputText = userInput.value;
+    updateText(inputText);
+    checkCompletion(inputText);
 });
 
-// Function to focus on the input when the container is clicked
+// Function to focus on input when container is clicked
 function focusInput() {
-  userInput.focus();
+    userInput.focus();
 }
 
 // Hide instruction when input is focused
 userInput.addEventListener('focus', () => {
-    clickInstruction.style.display = 'none'; // Hide instruction
+    clickInstruction.style.display = 'none';
 });
 
-// Show instruction when input loses focus
+// Show instruction if the input loses focus
 userInput.addEventListener('blur', () => {
-    if (userInput.value === '') { // Show only if input is empty
-        clickInstruction.style.display = 'block'; // Show instruction
+    if (userInput.value === '') {
+        clickInstruction.style.display = 'block';
     }
 });
 
-// Initially show instruction on focus
+// Hide instruction when the tab is focused
 window.addEventListener('focus', () => {
-    clickInstruction.style.display = 'none'; // Hide instruction when the tab is focused
+    clickInstruction.style.display = 'none';
 });
 
+// Show instruction when the tab loses focus
 window.addEventListener('blur', () => {
-    clickInstruction.style.display = 'block'; // Show instruction when the tab loses focus
+    clickInstruction.style.display = 'block';
 });

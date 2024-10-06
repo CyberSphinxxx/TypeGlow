@@ -1,7 +1,14 @@
+:root {
+    --bg-color: #282c34;
+    --text-color: #fefefe;
+    --highlight-color: #f1c40f;
+    --correct-color: #00ff6a;
+    --incorrect-color: #ff3333;
+}
 
 body {
     font-family: 'Noto Serif Oriya', serif;
-    background-color: #282c34;
+    background-color: var(--bg-color);
     color: #333333;
     display: flex;
     justify-content: center;
@@ -17,16 +24,16 @@ h1 {
     position: absolute; 
     top: 20px; 
     left: 20px; 
-    transition: ease-out 0.5s;
+    transition: color 0.5s ease-out;
 }
-h1:hover{
+h1:hover {
     color: gold;
-    transition: ease-in-out 0.5s;
+    transition: color 0.5s ease-in-out;
 }
 
 .container {
     text-align: center;
-    background-color: #ffffff;
+    background-color: var(--bg-color);
     padding: 40px;
     border-radius: 10px;
     box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
@@ -40,14 +47,18 @@ h1:hover{
 .level {
     margin: 0 15px;
     font-size: 1.2rem;
-    color: #666;
+    color: var(--text-color);
+}
+.level:hover {
+    color: gold;
+    transition: color 0.3s ease-in-out;
 }
 
 #targetText {
     font-size: 2rem;
     margin-bottom: 10px;
     letter-spacing: 2px;
-    color: #555;
+    color: var(--text-color);
 }
 
 #userInput {
@@ -56,27 +67,31 @@ h1:hover{
     left: -9999px;
 }
 
+#congratulations{
+    color: #00ff6a;
+}
+
 .click-instruction {
     font-size: 1.2rem;
-    color: #555;
+    color: #a7a7a7;
     margin-top: 15px;
 }
 
 .correct {
-    color: #00ff6a;
-    text-shadow: 0 0 8px #00ff6a;
+    color: var(--correct-color);
+    text-shadow: 0 0 8px var(--correct-color);
 }
 
 .incorrect {
-    color: #ff3333;
-    text-shadow: 0 0 8px #ff3333;
+    color: var(--incorrect-color);
+    text-shadow: 0 0 8px var(--incorrect-color);
 }
 
 .current {
-    color: #f1c40f;
+    color: var(--highlight-color);
     background-color: #444;
     font-weight: bold;
-    text-shadow: 0 0 8px #f1c40f;
+    text-shadow: 0 0 8px var(--highlight-color);
 }
 
 .correct, .incorrect, .current {
