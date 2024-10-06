@@ -39,10 +39,13 @@ function updateText(inputText) {
 
 // Function to check if user has completed typing the text
 function checkCompletion(inputText) {
-    if (inputText === originalText) {
+    // Trim the inputText to avoid issues with extra spaces
+    if (inputText.trim() === originalText) {
         congratulations.classList.remove('hidden');
         resetButton.classList.remove('hidden');
-    } else {
+    }
+    
+    else {
         congratulations.classList.add('hidden');
         resetButton.classList.add('hidden');
     }
