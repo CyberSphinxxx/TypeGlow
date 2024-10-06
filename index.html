@@ -9,19 +9,23 @@
 </head>
 <body>
     <div class="container" onclick="focusInput()">
+        <!--
         <div class="difficulty-levels">
             <span class="level">easy</span>
             <span class="level">medium</span>
             <span class="level">hard</span>
             <span class="level">impossible</span>
         </div>
-        
+        -->
+
         <h1>TypeGlow</h1>
-        <p id="targetText">Practice Text Hello World!</p>
+        <p id="targetText">Hello World!</p>
+        <p id="congratulations" class="hidden">Congratulations!</p>
         <input type="text" id="userInput" autofocus />
-        <p class="click-instruction">Click here to start typing!</p>
+        <p class="click-instruction" id="clickInstruction">Click here to start typing!</p>
     </div>
 
     <script src="scripts.js"></script>
 </body>
 </html>
+

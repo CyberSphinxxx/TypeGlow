@@ -1,4 +1,4 @@
-/* Apply Google Font */
+
 body {
     font-family: 'Noto Serif Oriya', serif;
     background-color: #282c34;
@@ -43,15 +43,9 @@ h1:hover{
     color: #666;
 }
 
-h1 {
-    font-size: 3rem;
-    margin-bottom: 20px;
-    color: #444;
-}
-
 #targetText {
     font-size: 2rem;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
     letter-spacing: 2px;
     color: #555;
 }
@@ -80,10 +74,15 @@ h1 {
 
 .current {
     color: #f1c40f;
+    background-color: #444;
     font-weight: bold;
     text-shadow: 0 0 8px #f1c40f;
 }
 
 .correct, .incorrect, .current {
     transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.hidden {
+    display: none;
 }
