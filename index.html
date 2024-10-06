@@ -10,15 +10,15 @@
 <body>
 
     <div class="difficulty-levels">
-        <span class="level">easy</span>
-        <span class="level">medium</span>
-        <span class="level">hard</span>
-        <span class="level">impossible</span>
+        <span class="level" data-level="easy">easy</span>
+        <span class="level" data-level="medium">medium</span>
+        <span class="level" data-level="hard">hard</span>
+        <span class="level" data-level="impossible">impossible</span>
     </div>
 
     <div class="container" onclick="focusInput()">
         <h1>TypeGlow</h1>
-        <p id="targetText">Hello World!</p>
+        <p id="targetText">Choose a Level to Start Playing</p>
         <p id="congratulations" class="hidden">Congratulations!</p>
         
         <input type="text" id="userInput" autofocus />
@@ -30,4 +30,3 @@
     <script src="scripts.js"></script>
 </body>
 </html>
-
