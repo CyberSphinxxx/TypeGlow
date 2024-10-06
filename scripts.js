@@ -3,6 +3,7 @@ const userInput = document.getElementById('userInput');
 const originalText = 'Hello World!';
 const congratulations = document.getElementById('congratulations');
 const clickInstruction = document.getElementById('clickInstruction');
+const resetButton = document.getElementById('resetButton');
 
 // Function to update the displayed text based on user input
 function updateText(inputText) {
@@ -31,10 +32,12 @@ function updateText(inputText) {
 function checkCompletion(inputText) {
     if (inputText === originalText) {
         congratulations.classList.remove('hidden');
+        resetButton.classList.remove('hidden'); // Show the reset button
     }
     
     else {
         congratulations.classList.add('hidden');
+        resetButton.classList.add('hidden'); // Hide the reset button if not complete
     }
 }
 
@@ -70,4 +73,14 @@ window.addEventListener('focus', () => {
 // Show instruction when the tab loses focus
 window.addEventListener('blur', () => {
     clickInstruction.style.display = 'block';
+});
+
+// Add event listener for reset button
+resetButton.addEventListener('click', () => {
+    userInput.value = '';
+    targetText.innerHTML = originalText;
+    congratulations.classList.add('hidden');
+    resetButton.classList.add('hidden');
+    clickInstruction.style.display = 'block';
+    userInput.focus();
 });
