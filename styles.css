@@ -39,11 +39,20 @@ h1:hover {
     cursor: pointer;
 }
 
+button {
+    user-select: none;
+}
+
 .level {
     margin: 0 15px;
     font-size: 1.8rem;
+    font-family: 'Noto Serif Oriya';
     color: var(--text-color);
     transition: color 0.3s ease-out;
+    background-color: #282c34;
+    border-radius: 10px;
+    border: none;
+    padding: 5px;
 }
 .level:hover {
     color: gold;
@@ -58,6 +67,8 @@ h1:hover {
     text-align: center;
     width: 500px;
     margin-top: 10px;
+    user-select: none;
+    transition: ease 1s;
 }
 
 #resetButton {
