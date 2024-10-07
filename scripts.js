@@ -6,42 +6,47 @@ const resetButton = document.getElementById('resetButton');
 
 const words = {
     easy: [
-        'apple', 'banana', 'cat', 'dog', 'elephant', 
+        'apple', 'banana', 'cat', 'dog', 'elephant',
         'fish', 'grape', 'hat', 'igloo', 'juice', 'ham',
         'orange', 'lemon', 'pencil', 'kite', 'robot', 'sun',
         'tree', 'cup', 'book', 'egg', 'vase', 'wolf', 'stone',
         'jet', 'door'
     ],
     medium: [
-        'cucumber', 'tomato', 'computer', 'internet', 
-        'keyboard', 'mouse', 'window', 'software', 
+        'cucumber', 'tomato', 'computer', 'internet',
+        'keyboard', 'mouse', 'window', 'software',
         'programming', 'algorithm', 'bicycle', 'mountain', 'library',
         'umbrella', 'calculator', 'elephant', 'sunflower', 'chocolate',
         'engineer', 'parachute'
     ],
     hard: [
-        'extraordinary', 'communication', 'development', 
-        'unbelievable', 'conventional', 'mathematics', 
-        'revolutionary', 'understanding', 'experimental', 
+        'extraordinary', 'communication', 'development',
+        'unbelievable', 'conventional', 'mathematics',
+        'revolutionary', 'understanding', 'experimental',
         'comprehension', 'implementation', 'circumference',
         'interpretation', 'architecture', 'sophistication',
-        'psychology', 'philosophy', 'institutional', 
+        'psychology', 'philosophy', 'institutional',
         'transformation', 'infrastructure'
     ],
     impossible: [
-        'incomprehensibilities', 'overcompensating', 
-        'disproportionately', 'electroencephalography', 
-        'interdisciplinary', 'microarchitecture', 
-        'counterproductive', 'disestablishmentarianism', 
+        'incomprehensibilities', 'overcompensating',
+        'disproportionately', 'electroencephalography',
+        'interdisciplinary', 'microarchitecture',
+        'counterproductive', 'disestablishmentarianism',
         'psychophysiological', 'electromagnetism', 'antidisestablishmentarianism',
         'uncharacteristically', 'subterraneanly', 'unconstitutionally', 'misunderstanding',
-        'internationalization', 'hypercholesterolemia', 
+        'internationalization', 'hypercholesterolemia',
         'deinstitutionalization', 'thermodynamically'
     ]
 };
 
 let originalText = 'Choose a Level to Start Playing'; // Set default text
 let startTime; // Variable to store the start time
+let typingComplete = false; // Track whether the user has completed typing
+let levelChosen = false; // Track if a level is chosen
+
+// Initially disable the input field
+userInput.disabled = true;
 
 // Create a WPM display element
 const wpmDisplay = document.createElement('p');
@@ -55,11 +60,9 @@ function getRandomWords(level) {
 
     // Shuffle the words array
     const shuffledWords = levelWords.sort(() => 0.5 - Math.random());
-    
-    // Get the first 'numberOfWords' from the shuffled array
-    const randomWords = shuffledWords.slice(0, numberOfWords).join(' ');
 
-    return randomWords;
+    // Get the first 'numberOfWords' from the shuffled array
+    return shuffledWords.slice(0, numberOfWords).join(' ');
 }
 
 // Function to update the displayed text based on user input
@@ -69,8 +72,8 @@ function updateText(inputText) {
 
     for (let i = 0; i < originalText.length; i++) {
         if (i < currentIndex) {
-            formattedText += inputText[i] === originalText[i] 
-                ? `<span class="correct">${originalText[i]}</span>` 
+            formattedText += inputText[i] === originalText[i]
+                ? `<span class="correct">${originalText[i]}</span>`
                 : `<span class="incorrect">${originalText[i]}</span>`;
         }
         
@@ -85,9 +88,12 @@ function updateText(inputText) {
     targetText.innerHTML = formattedText;
 }
 
-// Function to check if user has completed typing the text and calculate WPM
+// Function to check if the user has completed typing the text and calculate WPM
 function checkCompletion(inputText) {
     if (inputText === originalText) {
+        typingComplete = true; // Mark typing as complete
+        userInput.disabled = true; // Disable input field after completion
+        
         congratulations.classList.remove('hidden');
         resetButton.classList.remove('hidden');
         
@@ -113,6 +119,10 @@ document.querySelectorAll('.level').forEach(level => {
     level.addEventListener('click', (e) => {
         const selectedLevel = e.target.getAttribute('data-level');
         updateLevel(selectedLevel);
+        userInput.disabled = false; // Enable the input field when a level is selected
+        userInput.focus(); // Focus on the input field
+        levelChosen = true; // Mark that a level has been chosen
+        typingComplete = false; // Reset typing completion status
     });
 });
 
@@ -135,14 +145,18 @@ function updateLevel(level) {
 
 // Event listener for text input
 userInput.addEventListener('input', () => {
-    const inputText = userInput.value;
-    updateText(inputText);
-    checkCompletion(inputText);
+    if (!typingComplete && levelChosen) { // Only allow typing if a level is chosen and typing is not complete
+        const inputText = userInput.value;
+        updateText(inputText);
+        checkCompletion(inputText);
+    }
 });
 
 // Function to focus on input when the container is clicked
 function focusInput() {
-    userInput.focus();
+    if (levelChosen && !typingComplete) {
+        userInput.focus();
+    }
 }
 
 // Hide instruction when input is focused
@@ -169,11 +183,9 @@ window.addEventListener('blur', () => {
 
 // Reset button event listener
 resetButton.addEventListener('click', () => {
-    userInput.value = '';
-    targetText.innerHTML = originalText; // Reset to the current level's text
-    congratulations.classList.add('hidden');
-    resetButton.classList.add('hidden');
-    clickInstruction.style.display = 'block';
-    wpmDisplay.textContent = ''; // Clear WPM display on reset
-    userInput.focus();
+    const selectedLevel = document.querySelector('.level[data-selected="true"]').getAttribute('data-level');
+    updateLevel(selectedLevel);
+    userInput.disabled = true; // Disable input until the user selects a new level
+    levelChosen = false; // Reset levelChosen flag
+    typingComplete = false; // Reset typing completion status
 });
