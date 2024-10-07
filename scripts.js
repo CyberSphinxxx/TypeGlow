@@ -7,34 +7,51 @@ const resetButton = document.getElementById('resetButton');
 const words = {
     easy: [
         'apple', 'banana', 'cat', 'dog', 'elephant', 
-        'fish', 'grape', 'hat', 'igloo', 'juice'
+        'fish', 'grape', 'hat', 'igloo', 'juice', 'ham',
+        'orange', 'lemon', 'pencil', 'kite', 'robot', 'sun',
+        'tree', 'cup', 'book', 'egg', 'vase', 'wolf', 'stone',
+        'jet', 'door'
     ],
     medium: [
         'cucumber', 'tomato', 'computer', 'internet', 
         'keyboard', 'mouse', 'window', 'software', 
-        'programming', 'algorithm'
+        'programming', 'algorithm', 'bicycle', 'mountain', 'library',
+        'umbrella', 'calculator', 'elephant', 'sunflower', 'chocolate',
+        'engineer', 'parachute'
     ],
     hard: [
         'extraordinary', 'communication', 'development', 
         'unbelievable', 'conventional', 'mathematics', 
         'revolutionary', 'understanding', 'experimental', 
-        'comprehension'
+        'comprehension', 'implementation', 'circumference',
+        'interpretation', 'architecture', 'sophistication',
+        'psychology', 'philosophy', 'institutional', 
+        'transformation', 'infrastructure'
     ],
     impossible: [
         'incomprehensibilities', 'overcompensating', 
         'disproportionately', 'electroencephalography', 
         'interdisciplinary', 'microarchitecture', 
         'counterproductive', 'disestablishmentarianism', 
-        'psychophysiological', 'electromagnetism'
+        'psychophysiological', 'electromagnetism', 'antidisestablishmentarianism',
+        'uncharacteristically', 'subterraneanly', 'unconstitutionally', 'misunderstanding',
+        'internationalization', 'hypercholesterolemia', 
+        'deinstitutionalization', 'thermodynamically'
     ]
 };
 
 let originalText = 'Choose a Level to Start Playing'; // Set default text
+let startTime; // Variable to store the start time
+
+// Create a WPM display element
+const wpmDisplay = document.createElement('p');
+wpmDisplay.setAttribute('id', 'wpmDisplay');
+document.querySelector('.container').appendChild(wpmDisplay); // Append to the container
 
 // Function to get random words from the selected level
 function getRandomWords(level) {
     const levelWords = words[level];
-    const numberOfWords = level === 'easy' ? 10 : level === 'medium' ? 12 : level === 'hard' ? 15 : 20;
+    const numberOfWords = level === 'easy' ? 10 : level === 'medium' ? 12 : level === 'hard' ? 10 : 10;
 
     // Shuffle the words array
     const shuffledWords = levelWords.sort(() => 0.5 - Math.random());
@@ -68,16 +85,26 @@ function updateText(inputText) {
     targetText.innerHTML = formattedText;
 }
 
-// Function to check if user has completed typing the text
+// Function to check if user has completed typing the text and calculate WPM
 function checkCompletion(inputText) {
     if (inputText === originalText) {
         congratulations.classList.remove('hidden');
         resetButton.classList.remove('hidden');
+        
+        // Calculate WPM
+        const endTime = new Date(); // Get end time
+        const timeTakenInMinutes = (endTime - startTime) / 60000; // Time taken in minutes
+        const wordCount = originalText.split(' ').length; // Calculate the number of words
+        const wpm = Math.round(wordCount / timeTakenInMinutes); // Calculate WPM
+        
+        // Display WPM
+        wpmDisplay.textContent = `Your WPM: ${wpm}`;
     }
     
     else {
         congratulations.classList.add('hidden');
         resetButton.classList.add('hidden');
+        wpmDisplay.textContent = ''; // Clear WPM display if text is not completed
     }
 }
 
@@ -97,7 +124,11 @@ function updateLevel(level) {
     congratulations.classList.add('hidden'); // Hide the congratulations message
     resetButton.classList.add('hidden'); // Hide the reset button
     clickInstruction.style.display = 'block'; // Show the click instruction
+    wpmDisplay.textContent = ''; // Clear WPM display
 
+    // Start timer
+    startTime = new Date(); // Record the start time
+    
     // Reset text display
     targetText.innerHTML = originalText; // Set the new target text
 }
@@ -143,5 +174,6 @@ resetButton.addEventListener('click', () => {
     congratulations.classList.add('hidden');
     resetButton.classList.add('hidden');
     clickInstruction.style.display = 'block';
+    wpmDisplay.textContent = ''; // Clear WPM display on reset
     userInput.focus();
 });
