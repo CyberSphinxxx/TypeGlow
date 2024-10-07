@@ -1,6 +1,11 @@
 # TypeGlow
 **TypeGlow** is an interactive typing practice tool designed to improve typing accuracy and speed. As users type, correct letters light up, providing real-time feedback to help them stay on track. It's a fun and engaging way to enhance your typing skills!
 
+![TypeGlowGif](https://github.com/user-attachments/assets/1d81d2e6-df03-4c8d-b6aa-5f7680dee28c)
+
+
+
+
 ## Features
 - **Difficulty Levels**: Choose between easy, medium, hard, and impossible typing challenges.
 - **Real-time Feedback**: The text color changes as you type—green for correct characters and red for incorrect ones.
