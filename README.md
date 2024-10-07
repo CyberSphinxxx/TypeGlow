@@ -9,6 +9,10 @@
 - **Click to Start**: Simple and intuitive start by clicking anywhere in the typing container.
 - **Multiple Difficulty Levels**: Each level offers different texts of increasing difficulty.
 
+## Screenshot
+![Opera Snapshot_2024-10-06_211143_127 0 0 1](https://github.com/user-attachments/assets/657a283b-f72c-496d-a8e6-86b0a3b5c64c)
+
+
 ## Installation
 1. Clone the repository:
    ```bash
