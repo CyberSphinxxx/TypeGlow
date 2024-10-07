@@ -59,7 +59,7 @@ function getRandomWords(level) {
     const numberOfWords = level === 'easy' ? 10 : level === 'medium' ? 12 : level === 'hard' ? 10 : 10;
 
     // Shuffle the words array
-    const shuffledWords = levelWords.sort(() => 0.5 - Math.random());
+    const shuffledWords = [...levelWords].sort(() => 0.5 - Math.random());
 
     // Get the first 'numberOfWords' from the shuffled array
     return shuffledWords.slice(0, numberOfWords).join(' ');
@@ -117,6 +117,12 @@ function checkCompletion(inputText) {
 // Event listener for difficulty levels
 document.querySelectorAll('.level').forEach(level => {
     level.addEventListener('click', (e) => {
+        // Remove 'data-selected' from any previously selected level
+        document.querySelectorAll('.level').forEach(btn => btn.removeAttribute('data-selected'));
+
+        // Mark the clicked level as selected
+        e.target.setAttribute('data-selected', 'true');
+
         const selectedLevel = e.target.getAttribute('data-level');
         updateLevel(selectedLevel);
         userInput.disabled = false; // Enable the input field when a level is selected
@@ -183,9 +189,12 @@ window.addEventListener('blur', () => {
 
 // Reset button event listener
 resetButton.addEventListener('click', () => {
-    const selectedLevel = document.querySelector('.level[data-selected="true"]').getAttribute('data-level');
-    updateLevel(selectedLevel);
-    userInput.disabled = true; // Disable input until the user selects a new level
-    levelChosen = false; // Reset levelChosen flag
-    typingComplete = false; // Reset typing completion status
+    const selectedLevel = document.querySelector('.level[data-selected="true"]')?.getAttribute('data-level');
+    if (selectedLevel) {
+        updateLevel(selectedLevel); // Reset the text to a new set of random words for the selected level
+        userInput.disabled = false; // Re-enable the input field after reset
+        userInput.focus(); // Focus on the input field
+        levelChosen = true; // Keep levelChosen true, as we want to allow typing again
+        typingComplete = false; // Reset typing completion status
+    }
 });
