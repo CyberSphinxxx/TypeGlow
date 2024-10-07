@@ -36,11 +36,12 @@ h1:hover {
     text-align: center;
     margin-bottom: 20px;
     margin-top: 10px;
-    cursor: pointer;
+    user-select: none;
 }
 
 button {
     user-select: none;
+    cursor: pointer;
 }
 
 .level {
