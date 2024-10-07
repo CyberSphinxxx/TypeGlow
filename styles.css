@@ -23,14 +23,18 @@ body {
 h1 {
     font-size: 3rem;
     margin: 0;
-    color: gold;
+    color: rgb(255, 226, 59);
     position: absolute;
     top: 20px;
     left: 20px;
     transition: color 0.5s ease-out;
+
+    text-shadow:
+        0 0 10px gold,
+        0 0 0px gold;
 }
 h1:hover {
-    color: rgb(205, 174, 0);
+    color: rgb(255, 217, 0);
     transition: color 0.5s ease-in-out;
 }
 
@@ -169,7 +173,6 @@ button {
     background-color: #404652;
 }
 
-/* Media Queries for smaller devices */
 @media (max-width: 600px) {
     h1 {
         font-size: 2rem;
