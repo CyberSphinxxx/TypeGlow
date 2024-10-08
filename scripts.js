@@ -20,15 +20,6 @@ const words = {
         'engineer', 'parachute'
     ],
     hard: [
-        'extraordinary', 'communication', 'development',
-        'unbelievable', 'conventional', 'mathematics',
-        'revolutionary', 'understanding', 'experimental',
-        'comprehension', 'implementation', 'circumference',
-        'interpretation', 'architecture', 'sophistication',
-        'psychology', 'philosophy', 'institutional',
-        'transformation', 'infrastructure'
-    ],
-    impossible: [
         'incomprehensibilities', 'overcompensating',
         'disproportionately', 'electroencephalography',
         'interdisciplinary', 'microarchitecture',
@@ -37,7 +28,18 @@ const words = {
         'uncharacteristically', 'subterraneanly', 'unconstitutionally', 'misunderstanding',
         'internationalization', 'hypercholesterolemia',
         'deinstitutionalization', 'thermodynamically'
+    ],
+    impossible: [
+        'df%', '@ia', '%', '#!', ',', 'q', 'p', '!', ' ', 'a', 'p', '<', '"',
+        'x', '^#', '@p', 'c|', 'q-', 'yz', '#-', 'g', 'v a', 'zp', 'w', '>/', ']g',
+        'r$', '%^', '&*', 'b#', '>^', '@!x', '*g', '5k', '/q', '|_', '?fa', 'zp', 'f!',
+        'b&', '#$', 'x!', '@=', '|o', '?gk', '!d', 'w+', '-o', '[q', '|x', 'v%', 'p@',
+        'y$', '>%', 'r+', '*(', '@q', 'z&', '%q', '!<', '^xj', 'k+', ']_', '|w', '&!',
+        'q-', '/o', '@&', 'b!', '^v', '%^', 'g$', 'p<', '@>', '|^', '-w', '*g', '#_n',
+        'h$', 'm%r', '&z', '@t', 'x+', '?p', '!>', '/c', ']q', '|l', '^k', 'am+', '?/',
+        'p|', '@z', '#!', 'c-', '!b^', 'v+', 'y$', '-%', '>l', '|x', ']!', 'w#', '@>'
     ]
+    
 };
 
 let originalText = 'Choose a Level to Start Playing'; // Set default text
@@ -56,7 +58,7 @@ document.querySelector('.container').appendChild(wpmDisplay); // Append to the c
 // Function to get random words from the selected level
 function getRandomWords(level) {
     const levelWords = words[level];
-    const numberOfWords = level === 'easy' ? 10 : level === 'medium' ? 12 : level === 'hard' ? 10 : 10;
+    const numberOfWords = level === 'easy' ? 12 : level === 'medium' ? 12 : level === 'hard' ? 8 : 50;
 
     // Shuffle the words array
     const shuffledWords = [...levelWords].sort(() => 0.5 - Math.random());
