@@ -1,10 +1,10 @@
 import { words } from './WORDSLIST/words.js';
 
-const targetText = document.getElementById('targetText');
-const userInput = document.getElementById('userInput');
-const congratulations = document.getElementById('congratulations');
-const clickInstruction = document.getElementById('clickInstruction');
-const resetButton = document.getElementById('resetButton');
+const targetText        = document.getElementById('targetText');
+const userInput         = document.getElementById('userInput');
+const congratulations   = document.getElementById('congratulations');
+const clickInstruction  = document.getElementById('clickInstruction');
+const resetButton       = document.getElementById('resetButton');
 
 let originalText = 'Choose a Level to Start Playing'; // Set default text
 let startTime; // Variable to store the start time
@@ -37,22 +37,35 @@ function updateText(inputText) {
     const currentIndex = inputText.length;
 
     for (let i = 0; i < originalText.length; i++) {
+        const currentChar = originalText[i] === ' ' ? '&nbsp;' : originalText[i]; // Display spaces
+        const inputChar = inputText[i] === ' ' ? '&nbsp;' : inputText[i]; // Handle space input
+
         if (i < currentIndex) {
-            formattedText += inputText[i] === originalText[i]
-                ? `<span class="correct">${originalText[i]}</span>`
-                : `<span class="incorrect">${originalText[i]}</span>`;
+            if (originalText[i] === ' ' && inputText[i] !== ' ') {
+                // If the original is a space, but the input is not, mark it as incorrect
+                formattedText += `<span class="incorrect-space" style="background-color: rgba(255, 51, 51, 0.3);">&nbsp;</span>`;
+            }
+            
+            else if (inputChar === currentChar) {
+                formattedText += `<span class="correct">${currentChar}</span>`;
+            }
+            
+            else {
+                formattedText += `<span class="incorrect">${currentChar}</span>`;
+            }
         }
-
+        
         else if (i === currentIndex) {
-            formattedText += `<span class="current">${originalText[i]}</span>`;
+            formattedText += `<span class="current">${currentChar}</span>`;
         }
-
+        
         else {
-            formattedText += originalText[i];
+            formattedText += currentChar;
         }
     }
     targetText.innerHTML = formattedText;
 }
+
 
 // Function to check if the user has completed typing the text and calculate WPM
 function checkCompletion(inputText) {
