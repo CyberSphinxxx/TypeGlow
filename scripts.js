@@ -1,4 +1,4 @@
-import { words } from './words.js';
+import { words } from './WORDSLIST/words.js';
 
 const targetText = document.getElementById('targetText');
 const userInput = document.getElementById('userInput');
