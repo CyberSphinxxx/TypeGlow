@@ -1,8 +1,8 @@
-const targetText = document.getElementById('targetText');
-const userInput = document.getElementById('userInput');
-const congratulations = document.getElementById('congratulations');
+const targetText       = document.getElementById('targetText');
+const userInput        = document.getElementById('userInput');
+const congratulations  = document.getElementById('congratulations');
 const clickInstruction = document.getElementById('clickInstruction');
-const resetButton = document.getElementById('resetButton');
+const resetButton      = document.getElementById('resetButton');
 
 const words = {
     easy: [
@@ -12,6 +12,7 @@ const words = {
         'tree', 'cup', 'book', 'egg', 'vase', 'wolf', 'stone',
         'jet', 'door'
     ],
+
     medium: [
         'cucumber', 'tomato', 'computer', 'internet',
         'keyboard', 'mouse', 'window', 'software',
@@ -19,6 +20,7 @@ const words = {
         'umbrella', 'calculator', 'elephant', 'sunflower', 'chocolate',
         'engineer', 'parachute'
     ],
+
     hard: [
         'incomprehensibilities', 'overcompensating',
         'disproportionately', 'electroencephalography',
@@ -29,6 +31,7 @@ const words = {
         'internationalization', 'hypercholesterolemia',
         'deinstitutionalization', 'thermodynamically'
     ],
+    
     impossible: [
         'df%', '@ia', '%', '#!', ',', 'q', 'p', '!', ' ', 'a', 'p', '<', '"',
         'x', '^#', '@p', 'c|', 'q-', 'yz', '#-', 'g', 'v a', 'zp', 'w', '>/', ']g',
@@ -39,7 +42,6 @@ const words = {
         'h$', 'm%r', '&z', '@t', 'x+', '?p', '!>', '/c', ']q', '|l', '^k', 'am+', '?/',
         'p|', '@z', '#!', 'c-', '!b^', 'v+', 'y$', '-%', '>l', '|x', ']!', 'w#', '@>'
     ]
-    
 };
 
 let originalText = 'Choose a Level to Start Playing'; // Set default text
@@ -191,12 +193,16 @@ window.addEventListener('blur', () => {
 
 // Reset button event listener
 resetButton.addEventListener('click', () => {
-    const selectedLevel = document.querySelector('.level[data-selected="true"]')?.getAttribute('data-level');
-    if (selectedLevel) {
-        updateLevel(selectedLevel); // Reset the text to a new set of random words for the selected level
-        userInput.disabled = false; // Re-enable the input field after reset
-        userInput.focus(); // Focus on the input field
-        levelChosen = true; // Keep levelChosen true, as we want to allow typing again
-        typingComplete = false; // Reset typing completion status
-    }
+    userInput.disabled = true; // Disable input
+    levelChosen = false; // Reset level chosen status
+    typingComplete = false; // Reset typing completion status
+    targetText.innerHTML = 'Choose a Level to Start Playing'; // Reset text
+    userInput.value = ''; // Clear the input field
+    wpmDisplay.textContent = ''; // Clear WPM display
+    congratulations.classList.add('hidden'); // Hide the congratulations message
+    resetButton.classList.add('hidden'); // Hide the reset button
+    clickInstruction.style.display = 'block'; // Show the click instruction
 });
+
+// Click event to focus on the input
+document.querySelector('.container').addEventListener('click', focusInput);
