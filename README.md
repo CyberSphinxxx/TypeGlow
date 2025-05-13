@@ -55,7 +55,7 @@ We welcome contributions to **TypeGlow**! If you'd like to help improve the proj
 1. **Fork the repository**: Click the "Fork" button on the top right of the repository page.
 2. **Clone your forked repository**:
    ```bash
-   git clone https://github.com/your-username/TypeGlow.git
+   git clone https://github.com/CyberSphinxxx/TypeGlow.git
    ```
 3. Create a new branch for your feature or bug fix:
    ```bash
