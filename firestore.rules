@@ -1,0 +1,13 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /scores/{scoreId} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.resource.data.wpm is number
+                    && request.resource.data.accuracy is number
+                    && request.resource.data.timestamp is timestamp;
+      allow update, delete: if false;
+    }
+  }
+}
