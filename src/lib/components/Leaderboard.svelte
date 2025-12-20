@@ -1,13 +1,33 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { getLeaderboard, type ScoreEntry } from "../services/scoreService";
+    import {
+        getLeaderboard,
+        type ScoreEntry,
+        type LeaderboardFilter,
+    } from "../services/scoreService";
+    import { user } from "../stores/AuthStore";
 
     let scores = $state<ScoreEntry[]>([]);
     let loading = $state(true);
 
+    // Filter state
+    let activeMode = $state<"time" | "words">("words");
+    let activeLimit = $state(25);
+
+    const timeOptions = [15, 30, 60, 120];
+    const wordOptions = [10, 25, 50, 100];
+
+    let limitOptions = $derived(
+        activeMode === "time" ? timeOptions : wordOptions,
+    );
+
     async function loadScores() {
         loading = true;
-        scores = await getLeaderboard();
+        const filter: LeaderboardFilter = {
+            mode: activeMode,
+            limit: activeLimit,
+        };
+        scores = await getLeaderboard(filter);
         loading = false;
     }
 
@@ -15,20 +35,89 @@
         loadScores();
     });
 
-    // Expose refresh method if needed, or just auto-refresh on mount/updates
+    // Reload when filters change
+    $effect(() => {
+        // Track dependencies
+        const _mode = activeMode;
+        const _limit = activeLimit;
+        loadScores();
+    });
+
+    function setMode(mode: "time" | "words") {
+        activeMode = mode;
+        activeLimit = mode === "time" ? 30 : 25;
+    }
+
+    // Check if current user is in top 10
+    let userInTop10 = $derived(
+        $user
+            ? scores.slice(0, 10).some((s) => s.userName === $user?.displayName)
+            : false,
+    );
+
+    // Get user's personal best if not in top 10
+    let userBest = $derived(
+        $user && !userInTop10
+            ? scores.find((s) => s.userName === $user?.displayName)
+            : null,
+    );
+
     export function refresh() {
         loadScores();
     }
 </script>
 
-<div
-    class="leaderboard w-full max-w-[800px] mt-12 mb-20 text-[#fefefe] font-['JetBrains_Mono']"
->
-    <h2
-        class="text-2xl text-center mb-8 text-cyan-400 uppercase tracking-widest drop-shadow-[0_0_10px_cyan]"
+<div class="leaderboard w-full max-w-4xl mx-auto font-['JetBrains_Mono']">
+    <!-- Title -->
+    <h1 class="text-3xl text-center mb-8 text-white uppercase tracking-widest">
+        Leader<span class="text-cyan-400 drop-shadow-[0_0_15px_cyan]"
+            >board</span
+        >
+    </h1>
+
+    <!-- Filter Bar -->
+    <div
+        class="flex flex-wrap items-center justify-center gap-6 mb-8 p-4 bg-slate-900/50 backdrop-blur-md border border-white/10 rounded-xl"
     >
-        High Scores
-    </h2>
+        <!-- Mode Toggles -->
+        <div class="flex items-center gap-2">
+            <button
+                class="px-4 py-2 rounded-lg text-sm transition-all duration-200 {activeMode ===
+                'time'
+                    ? 'text-cyan-400 bg-cyan-400/10 font-bold'
+                    : 'text-gray-500 hover:text-gray-300'}"
+                onclick={() => setMode("time")}
+            >
+                ⏱️ Time
+            </button>
+            <button
+                class="px-4 py-2 rounded-lg text-sm transition-all duration-200 {activeMode ===
+                'words'
+                    ? 'text-cyan-400 bg-cyan-400/10 font-bold'
+                    : 'text-gray-500 hover:text-gray-300'}"
+                onclick={() => setMode("words")}
+            >
+                🅰️ Words
+            </button>
+        </div>
+
+        <span class="text-gray-700">|</span>
+
+        <!-- Limit Options -->
+        <div class="flex items-center gap-1">
+            {#each limitOptions as opt}
+                <button
+                    class="px-3 py-1 rounded-lg text-sm transition-all duration-200 {activeLimit ===
+                    opt
+                        ? 'text-cyan-400 font-bold drop-shadow-[0_0_8px_cyan]'
+                        : 'text-gray-500 hover:text-gray-300'}"
+                    onclick={() => (activeLimit = opt)}
+                >
+                    {opt}
+                </button>
+            {/each}
+        </div>
+    </div>
 
     {#if loading}
         <div class="flex justify-center items-center h-40">
@@ -40,88 +129,170 @@
         <div
             class="text-center p-10 border border-dashed border-gray-700 rounded-lg text-gray-500"
         >
-            <p>No legends yet.</p>
+            <p class="text-xl">No legends yet.</p>
             <p class="text-sm mt-2">Be the first to claim the throne.</p>
         </div>
     {:else}
-        <div class="flex flex-col gap-3">
-            {#each scores as score, index}
+        <!-- Glass Table -->
+        <div
+            class="bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden"
+        >
+            <!-- Header Row -->
+            <div
+                class="grid grid-cols-12 gap-4 px-6 py-4 bg-slate-800/30 border-b border-white/5"
+            >
                 <div
-                    class="group relative flex items-center justify-between p-4 rounded-lg bg-gray-900/40 border border-gray-800 transition-all duration-300 hover:bg-gray-800/60 hover:border-cyan-500/50 hover:shadow-[0_0_15px_rgba(6,182,212,0.15)]"
+                    class="col-span-1 text-xs font-bold text-gray-500 uppercase tracking-wider"
                 >
-                    <!-- Rank & Player -->
-                    <div class="flex items-center gap-6">
-                        <div class="text-2xl w-8 text-center">
-                            {#if index === 0}🏆
-                            {:else if index === 1}🥈
-                            {:else if index === 2}🥉
-                            {:else}
-                                <span class="text-gray-600 font-bold text-lg"
-                                    >#{index + 1}</span
-                                >
-                            {/if}
-                        </div>
+                    Rank
+                </div>
+                <div
+                    class="col-span-5 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                >
+                    Player
+                </div>
+                <div
+                    class="col-span-2 text-xs font-bold text-gray-500 uppercase tracking-wider"
+                >
+                    Date
+                </div>
+                <div
+                    class="col-span-2 text-xs font-bold text-gray-500 uppercase tracking-wider text-right"
+                >
+                    Accuracy
+                </div>
+                <div
+                    class="col-span-2 text-xs font-bold text-gray-500 uppercase tracking-wider text-right"
+                >
+                    WPM
+                </div>
+            </div>
 
-                        <div class="flex items-center gap-4">
-                            {#if score.photoURL}
-                                <img
-                                    src={score.photoURL}
-                                    alt={score.userName}
-                                    class="w-10 h-10 rounded-full border-2 border-gray-700 group-hover:border-cyan-400 transition-colors"
-                                />
-                            {:else}
-                                <div
-                                    class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center border-2 border-gray-700 text-gray-400 font-bold group-hover:border-cyan-400 group-hover:text-cyan-400 transition-colors"
-                                >
-                                    {score.userName
-                                        ? score.userName[0].toUpperCase()
-                                        : "?"}
-                                </div>
-                            {/if}
-
-                            <div class="flex flex-col">
-                                <span
-                                    class="font-bold text-lg text-gray-200 group-hover:text-white transition-colors"
-                                    >{score.userName}</span
-                                >
-                                <span class="text-xs text-gray-500"
-                                    >{score.timestamp.toLocaleDateString()}</span
-                                >
-                            </div>
-                        </div>
+            <!-- Data Rows -->
+            {#each scores.slice(0, 10) as score, index}
+                <div
+                    class="grid grid-cols-12 gap-4 px-6 py-4 items-center border-b border-white/5 transition-all duration-200 hover:bg-white/5
+                    {index === 0
+                        ? 'bg-yellow-500/10'
+                        : index === 1
+                          ? 'bg-slate-400/10'
+                          : index === 2
+                            ? 'bg-orange-700/10'
+                            : ''}"
+                >
+                    <!-- Rank -->
+                    <div class="col-span-1 text-lg">
+                        {#if index === 0}
+                            <span class="text-2xl">🏆</span>
+                        {:else if index === 1}
+                            <span class="text-2xl">🥈</span>
+                        {:else if index === 2}
+                            <span class="text-2xl">🥉</span>
+                        {:else}
+                            <span class="text-gray-600 font-bold"
+                                >#{index + 1}</span
+                            >
+                        {/if}
                     </div>
 
-                    <!-- Stats -->
-                    <div class="flex items-center gap-8 text-right">
-                        <div class="flex flex-col items-end">
-                            <span
-                                class="text-xs text-gray-500 uppercase tracking-wider"
-                                >Accuracy</span
+                    <!-- Player -->
+                    <div class="col-span-5 flex items-center gap-3">
+                        {#if score.photoURL}
+                            <img
+                                src={score.photoURL}
+                                alt={score.userName}
+                                class="w-8 h-8 rounded-full border border-gray-700"
+                            />
+                        {:else}
+                            <div
+                                class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center border border-gray-700 text-gray-400 text-sm font-bold"
                             >
-                            <span class="font-bold text-gray-300"
-                                >{score.accuracy}%</span
-                            >
-                        </div>
+                                {score.userName
+                                    ? score.userName[0].toUpperCase()
+                                    : "?"}
+                            </div>
+                        {/if}
+                        <span class="text-gray-200 font-medium truncate"
+                            >{score.userName}</span
+                        >
+                    </div>
 
-                        <div class="flex flex-col items-end w-24">
-                            <span
-                                class="text-xs text-gray-500 uppercase tracking-wider mb-1"
-                                >WPM</span
-                            >
-                            <span
-                                class="text-3xl font-bold leading-none
-                                {score.wpm >= 100
-                                    ? 'text-yellow-400 drop-shadow-[0_0_8px_gold]'
-                                    : score.wpm >= 60
-                                      ? 'text-[#00ff6a] drop-shadow-[0_0_8px_#00ff6a]'
-                                      : 'text-cyan-400'}"
-                            >
-                                {score.wpm}
-                            </span>
-                        </div>
+                    <!-- Date -->
+                    <div class="col-span-2 text-gray-500 text-sm">
+                        {score.timestamp.toLocaleDateString()}
+                    </div>
+
+                    <!-- Accuracy -->
+                    <div class="col-span-2 text-right text-gray-300">
+                        {score.accuracy}%
+                    </div>
+
+                    <!-- WPM -->
+                    <div
+                        class="col-span-2 text-right text-2xl font-bold
+                        {index === 0
+                            ? 'text-yellow-400 drop-shadow-[0_0_10px_gold]'
+                            : index === 1
+                              ? 'text-slate-300'
+                              : index === 2
+                                ? 'text-orange-400'
+                                : 'text-cyan-400'}"
+                    >
+                        {score.wpm}
                     </div>
                 </div>
             {/each}
+
+            <!-- User's Personal Best (if not in top 10) -->
+            {#if userBest}
+                <div
+                    class="grid grid-cols-12 gap-4 px-6 py-4 items-center bg-cyan-500/10 border-t border-cyan-500/30"
+                >
+                    <!-- Rank -->
+                    <div class="col-span-1">
+                        <span class="text-gray-500 text-sm">You</span>
+                    </div>
+
+                    <!-- Player -->
+                    <div class="col-span-5 flex items-center gap-3">
+                        {#if userBest.photoURL}
+                            <img
+                                src={userBest.photoURL}
+                                alt={userBest.userName}
+                                class="w-8 h-8 rounded-full border border-cyan-500"
+                            />
+                        {:else}
+                            <div
+                                class="w-8 h-8 rounded-full bg-cyan-900 flex items-center justify-center border border-cyan-500 text-cyan-400 text-sm font-bold"
+                            >
+                                {userBest.userName
+                                    ? userBest.userName[0].toUpperCase()
+                                    : "?"}
+                            </div>
+                        {/if}
+                        <span class="text-cyan-400 font-medium"
+                            >{userBest.userName}</span
+                        >
+                    </div>
+
+                    <!-- Date -->
+                    <div class="col-span-2 text-gray-500 text-sm">
+                        {userBest.timestamp.toLocaleDateString()}
+                    </div>
+
+                    <!-- Accuracy -->
+                    <div class="col-span-2 text-right text-gray-300">
+                        {userBest.accuracy}%
+                    </div>
+
+                    <!-- WPM -->
+                    <div
+                        class="col-span-2 text-right text-2xl font-bold text-cyan-400"
+                    >
+                        {userBest.wpm}
+                    </div>
+                </div>
+            {/if}
         </div>
     {/if}
 </div>
