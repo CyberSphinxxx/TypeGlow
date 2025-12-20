@@ -7,6 +7,6 @@
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 
-<div class="h-screen w-screen bg-[#282c34] font-['Noto_Serif_Oriya'] text-[#333333] flex flex-col justify-center items-center overflow-hidden p-5 box-border relative">
+<div class="h-screen w-screen bg-[#050505] font-['JetBrains_Mono'] text-white flex flex-col items-center overflow-hidden p-5 box-border relative">
 	{@render children()}
 </div>
