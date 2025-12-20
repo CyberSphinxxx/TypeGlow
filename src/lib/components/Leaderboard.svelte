@@ -9,6 +9,7 @@
 
     let scores = $state<ScoreEntry[]>([]);
     let loading = $state(true);
+    let error = $state<string | null>(null);
 
     // Filter state
     let activeMode = $state<"time" | "words">("words");
@@ -23,12 +24,20 @@
 
     async function loadScores() {
         loading = true;
-        const filter: LeaderboardFilter = {
-            mode: activeMode,
-            limit: activeLimit,
-        };
-        scores = await getLeaderboard(filter);
-        loading = false;
+        error = null;
+        try {
+            const filter: LeaderboardFilter = {
+                mode: activeMode,
+                limit: activeLimit,
+            };
+            scores = await getLeaderboard(filter);
+        } catch (e) {
+            console.error("Failed to load leaderboard:", e);
+            error = e instanceof Error ? e.message : "Something went wrong";
+            scores = [];
+        } finally {
+            loading = false;
+        }
     }
 
     onMount(() => {
@@ -120,10 +129,102 @@
     </div>
 
     {#if loading}
-        <div class="flex justify-center items-center h-40">
+        <!-- Skeleton Loader -->
+        <div
+            class="bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden"
+        >
+            <!-- Skeleton Header Row -->
             <div
-                class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-400"
-            ></div>
+                class="grid grid-cols-12 gap-4 px-6 py-4 bg-slate-800/30 border-b border-white/5"
+            >
+                <div class="col-span-1">
+                    <div
+                        class="h-4 w-8 bg-gray-700 rounded animate-pulse"
+                    ></div>
+                </div>
+                <div class="col-span-5">
+                    <div
+                        class="h-4 w-16 bg-gray-700 rounded animate-pulse"
+                    ></div>
+                </div>
+                <div class="col-span-2">
+                    <div
+                        class="h-4 w-12 bg-gray-700 rounded animate-pulse"
+                    ></div>
+                </div>
+                <div class="col-span-2">
+                    <div
+                        class="h-4 w-16 bg-gray-700 rounded animate-pulse ml-auto"
+                    ></div>
+                </div>
+                <div class="col-span-2">
+                    <div
+                        class="h-4 w-12 bg-gray-700 rounded animate-pulse ml-auto"
+                    ></div>
+                </div>
+            </div>
+
+            <!-- Skeleton Data Rows -->
+            {#each Array(5) as _, index}
+                <div
+                    class="grid grid-cols-12 gap-4 px-6 py-4 items-center border-b border-white/5"
+                >
+                    <!-- Rank Skeleton -->
+                    <div class="col-span-1">
+                        <div
+                            class="h-8 w-8 bg-gray-700 rounded animate-pulse"
+                        ></div>
+                    </div>
+
+                    <!-- Player Skeleton -->
+                    <div class="col-span-5 flex items-center gap-3">
+                        <div
+                            class="w-8 h-8 rounded-full bg-gray-700 animate-pulse"
+                        ></div>
+                        <div
+                            class="h-4 w-24 bg-gray-700 rounded animate-pulse"
+                        ></div>
+                    </div>
+
+                    <!-- Date Skeleton -->
+                    <div class="col-span-2">
+                        <div
+                            class="h-4 w-20 bg-gray-700 rounded animate-pulse"
+                        ></div>
+                    </div>
+
+                    <!-- Accuracy Skeleton -->
+                    <div class="col-span-2">
+                        <div
+                            class="h-4 w-12 bg-gray-700 rounded animate-pulse ml-auto"
+                        ></div>
+                    </div>
+
+                    <!-- WPM Skeleton -->
+                    <div class="col-span-2">
+                        <div
+                            class="h-8 w-16 bg-gray-700 rounded animate-pulse ml-auto"
+                        ></div>
+                    </div>
+                </div>
+            {/each}
+        </div>
+    {:else if error}
+        <!-- Error State with Retry -->
+        <div
+            class="text-center p-10 bg-red-500/10 border border-red-500/30 rounded-xl"
+        >
+            <div class="text-4xl mb-4">⚠️</div>
+            <p class="text-red-400 text-lg font-['JetBrains_Mono'] mb-2">
+                Failed to load leaderboard
+            </p>
+            <p class="text-gray-500 text-sm mb-6">{error}</p>
+            <button
+                onclick={loadScores}
+                class="px-6 py-3 bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 rounded-lg font-['JetBrains_Mono'] hover:bg-cyan-500/30 transition-all duration-200"
+            >
+                🔄 Try Again
+            </button>
         </div>
     {:else if scores.length === 0}
         <div
