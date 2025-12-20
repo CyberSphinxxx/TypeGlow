@@ -1,20 +1,24 @@
 <script lang="ts">
     import { soundEnabled } from "../services/soundManager";
+
+    let { showKeybindHint = false }: { showKeybindHint?: boolean } = $props();
 </script>
 
-<!-- Keybind Hints (Centered Footer) -->
-<div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40">
-    <div
-        class="flex items-center gap-2 text-xs text-gray-600 font-['JetBrains_Mono']"
-    >
-        <kbd
-            class="px-2 py-1 bg-gray-800/80 rounded border border-gray-700 text-gray-500"
-            >tab</kbd
+<!-- Keybind Hints (Centered Footer) - Only show on game page -->
+{#if showKeybindHint}
+    <div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40">
+        <div
+            class="flex items-center gap-2 text-xs text-gray-600 font-['JetBrains_Mono']"
         >
-        <span class="text-gray-700">-</span>
-        <span>restart test</span>
+            <kbd
+                class="px-2 py-1 bg-gray-800/80 rounded border border-gray-700 text-gray-500"
+                >tab</kbd
+            >
+            <span class="text-gray-700">-</span>
+            <span>restart test</span>
+        </div>
     </div>
-</div>
+{/if}
 
 <!-- Control Dock (Bottom Right) -->
 <footer class="fixed bottom-8 right-8 z-50">
