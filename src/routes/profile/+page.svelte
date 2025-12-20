@@ -11,7 +11,13 @@
         orderBy,
     } from "firebase/firestore";
     import { db } from "$lib/firebase";
-    import { Trophy, Clock, Target, Zap, Percent } from "lucide-svelte";
+    import { Trophy, Clock, Target, Zap, Percent, Award } from "lucide-svelte";
+    import {
+        getUserAchievements,
+        ACHIEVEMENTS,
+        type UnlockedAchievement,
+        type AchievementDefinition,
+    } from "$lib/services/achievementService";
 
     // Stats state
     let testsStarted = $state(0);
@@ -29,12 +35,15 @@
     }
     let personalBests = $state<PersonalBest[]>([]);
 
-    // Recent scores for progress chart (last 20)
     interface RecentScore {
         wpm: number;
         date: string;
     }
     let recentScores = $state<RecentScore[]>([]);
+
+    // Achievements
+    let userAchievements = $state<UnlockedAchievement[]>([]);
+    let unlockedIds = $derived(new Set(userAchievements.map((a) => a.id)));
 
     // Chart calculations (derived from recentScores)
     let chartData = $derived.by(() => {
@@ -200,6 +209,9 @@
                     date: s.timestamp?.toDate?.()?.toLocaleDateString() || "",
                 }))
                 .reverse(); // Reverse to show oldest first in chart
+
+            // Load achievements
+            userAchievements = await getUserAchievements($user.uid);
         } catch (e) {
             console.error("Error loading user stats:", e);
         }
@@ -524,6 +536,64 @@
                                 >
                                     Play Now
                                 </a>
+                            {/if}
+                        </div>
+                    {/each}
+                </div>
+            </div>
+
+            <!-- Achievements Section -->
+            <div class="w-full mt-10">
+                <h2
+                    class="text-xl font-['JetBrains_Mono'] text-white mb-6 flex items-center gap-3"
+                >
+                    <Award class="w-5 h-5 text-purple-400" />
+                    Achievements
+                    <span class="text-sm text-gray-500 font-normal">
+                        ({userAchievements.length}/{ACHIEVEMENTS.length})
+                    </span>
+                </h2>
+
+                <div
+                    class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
+                >
+                    {#each ACHIEVEMENTS as achievement}
+                        {@const isUnlocked = unlockedIds.has(achievement.id)}
+                        {@const unlockedData = userAchievements.find(
+                            (a) => a.id === achievement.id,
+                        )}
+                        <div
+                            class="achievement-card rounded-xl p-4 text-center transition-all duration-300 {isUnlocked
+                                ? 'bg-slate-900/50 backdrop-blur-xl border border-white/10 hover:border-purple-500/30'
+                                : 'bg-slate-900/20 border-2 border-dashed border-gray-700/30 opacity-50'}"
+                        >
+                            <div
+                                class="text-3xl mb-2 {isUnlocked
+                                    ? 'filter-none'
+                                    : 'grayscale'}"
+                            >
+                                {achievement.icon}
+                            </div>
+                            <div
+                                class="text-sm font-['JetBrains_Mono'] font-semibold mb-1 {isUnlocked
+                                    ? 'text-white'
+                                    : 'text-gray-500'}"
+                            >
+                                {achievement.name}
+                            </div>
+                            <div
+                                class="text-xs {isUnlocked
+                                    ? 'text-gray-400'
+                                    : 'text-gray-600'}"
+                            >
+                                {achievement.description}
+                            </div>
+                            {#if isUnlocked && unlockedData}
+                                <div
+                                    class="text-[10px] text-purple-400 mt-2 font-mono"
+                                >
+                                    {unlockedData.unlockedAt.toLocaleDateString()}
+                                </div>
                             {/if}
                         </div>
                     {/each}
