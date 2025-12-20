@@ -13,6 +13,8 @@
         currentStreak = 0,
         accuracy = 0,
         testDuration = 0,
+        remainingTime = 0,
+        gameMode = "words",
     } = $props<{
         targetText: string;
         charStates: CharState[];
@@ -25,6 +27,8 @@
         currentStreak?: number;
         accuracy?: number;
         testDuration?: number;
+        remainingTime?: number;
+        gameMode?: string;
     }>();
 
     import { onMount, onDestroy } from "svelte";
@@ -141,12 +145,31 @@
     onkeydown={handleKeydown}
     bind:this={containerRef}
 >
-    <!-- Live WPM -->
-    {#if wpm > 0 && !typingComplete}
+    <!-- Live Stats Row -->
+    {#if !typingComplete && charStates.length > 0}
         <div
-            class="absolute top-0 left-0 text-cyan-500/50 font-bold text-xl select-none"
+            class="absolute top-0 left-0 right-0 flex justify-between items-center"
         >
-            {wpm} WPM
+            <!-- Live WPM (left) -->
+            {#if wpm > 0}
+                <div class="text-cyan-500/50 font-bold text-xl select-none">
+                    {wpm} WPM
+                </div>
+            {:else}
+                <div></div>
+            {/if}
+
+            <!-- Timer (right, only in time mode) -->
+            {#if gameMode === "time"}
+                <div
+                    class="text-cyan-400 font-bold text-2xl font-['JetBrains_Mono'] select-none {remainingTime <=
+                    10
+                        ? 'text-red-400 animate-pulse'
+                        : ''}"
+                >
+                    {Math.ceil(remainingTime)}s
+                </div>
+            {/if}
         </div>
     {/if}
 
