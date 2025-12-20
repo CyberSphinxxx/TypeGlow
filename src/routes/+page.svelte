@@ -1,76 +1,152 @@
 <script lang="ts">
-    import Header from '$lib/components/Header.svelte';
-    import TypingArea from '$lib/components/TypingArea.svelte';
-    import Footer from '$lib/components/Footer.svelte';
-    import Leaderboard from '$lib/components/Leaderboard.svelte';
-    import { TypingEngine } from '$lib/gameEngine';
-    import { saveScore } from '$lib/services/scoreService';
-    import { user } from '$lib/stores/AuthStore';
-    import type { User } from 'firebase/auth'; // Ensure type import if needed or just rely on store logic
-    import { get } from 'svelte/store'; // To get value if needed non-reactively, but $user is better
+    import Header from "$lib/components/Header.svelte";
+    import TypingArea from "$lib/components/TypingArea.svelte";
+    import Footer from "$lib/components/Footer.svelte";
+    import ConfigBar from "$lib/components/ConfigBar.svelte";
+
+    import { TypingEngine } from "$lib/gameEngine";
+    import { saveScore } from "$lib/services/scoreService";
+    import { user } from "$lib/stores/AuthStore";
+
+    import { soundManager } from "$lib/services/soundManager";
 
     const engine = new TypingEngine();
     let gameState = $state(engine.getState());
-    let currentInput = $state('');
+    let currentInput = $state("");
 
-    function handleLevelSelect(level: string) {
-        currentInput = '';
-        gameState = engine.startLevel(level);
-        
-        // Auto-focus logic can be handled in TypingArea via prop change if needed, 
-        // but simple focus happens on click mostly. 
-        // The Header event will reset the game state.
-        
-        // Wait for UI update then focus? 
-        // Actually, let's just ensure input is cleared.
-        setTimeout(() => {
-            const input = document.getElementById('userInput') as HTMLInputElement;
-            input?.focus();
-        }, 0);
+    // Config state
+    let gameMode = $state("words"); // "time" or "words"
+    let quantity = $state(25); // Word count or time in seconds
+    let punctuation = $state(false);
+    let numbers = $state(false);
+
+    $effect(() => {
+        // Unlock audio context on first interaction
+        const unlock = () => {
+            soundManager.unlockAudio();
+            window.removeEventListener("click", unlock);
+            window.removeEventListener("keydown", unlock);
+        };
+        window.addEventListener("click", unlock);
+        window.addEventListener("keydown", unlock);
+        return () => {
+            window.removeEventListener("click", unlock);
+            window.removeEventListener("keydown", unlock);
+        };
+    });
+
+    $effect(() => {
+        const interval = setInterval(() => {
+            if (!gameState.typingComplete && gameState.startTime) {
+                gameState = engine.updateLiveWPM();
+            }
+        }, 1000);
+        return () => clearInterval(interval);
+    });
+
+    function startGame() {
+        currentInput = "";
+
+        const input = document.getElementById("userInput") as HTMLInputElement;
+        if (input) input.value = "";
+
+        // Pass config to engine
+        gameState = engine.startGame({
+            mode: gameMode as "time" | "words",
+            limit: quantity,
+            usePunctuation: punctuation,
+            useNumbers: numbers,
+        });
+
+        input?.focus();
     }
 
-    let leaderboardComponent: Leaderboard;
+    function handleConfigChange() {
+        // Restart with new config when user changes settings
+        startGame();
+    }
 
     async function handleInput(val: string) {
-        // Prevent double processing if already complete
         if (gameState.typingComplete) return;
 
-        currentInput = val;
-        const newState = engine.handleInput(val);
-        gameState = newState;
+        if (val.length > currentInput.length) {
+            const newState = engine.handleInput(val);
+            const addedIndex = val.length - 1;
+            const charState = newState.charStates[addedIndex];
 
-        if (newState.typingComplete) {
-            // Game just finished
+            if (charState) {
+                if (
+                    charState.status === "correct" ||
+                    (charState.char === " " && val[addedIndex] === " ")
+                ) {
+                    soundManager.playClick();
+                } else if (
+                    charState.status === "incorrect" ||
+                    charState.status === "incorrect-space"
+                ) {
+                    soundManager.playError();
+                }
+            }
+
+            gameState = newState;
+        } else {
+            gameState = engine.handleInput(val);
+        }
+
+        currentInput = val;
+
+        if (gameState.typingComplete) {
             if ($user) {
-                await saveScore({
-                    wpm: newState.wpm,
-                    accuracy: newState.accuracy,
-                    timestamp: new Date()
-                }, $user);
-                
-                // Refresh leaderboard
-                leaderboardComponent?.refresh();
+                await saveScore(
+                    {
+                        wpm: gameState.wpm,
+                        accuracy: gameState.accuracy,
+                        timestamp: new Date(),
+                    },
+                    $user,
+                );
             }
         }
     }
-    
+
     function handleReset() {
-        currentInput = '';
-        gameState = engine.reset();
+        startGame();
     }
+
+    let isInputFocused = $state(false);
 </script>
 
-<Header onselectlevel={handleLevelSelect} />
-<TypingArea 
-    targetText={gameState.targetText}
-    charStates={gameState.charStates}
-    wpm={gameState.wpm}
-    typingComplete={gameState.typingComplete}
-    bind:hiddenInput={currentInput}
-    oninput={handleInput}
-    onreset={handleReset}
-/>
+<Header />
 
-<Leaderboard bind:this={leaderboardComponent} />
+<main
+    class="flex-grow flex flex-col items-center w-full max-w-[1200px] relative z-10 p-5 pt-32"
+>
+    <!-- Config Bar (Monkeytype Style) -->
+    <ConfigBar
+        bind:mode={gameMode}
+        bind:quantity
+        bind:punctuation
+        bind:numbers
+        onConfigChange={handleConfigChange}
+    />
 
-<Footer />
+    <TypingArea
+        targetText={gameState.targetText}
+        charStates={gameState.charStates}
+        wpm={gameState.wpm}
+        typingComplete={gameState.typingComplete}
+        currentStreak={gameState.currentStreak}
+        accuracy={gameState.accuracy}
+        testDuration={gameState.endTime && gameState.startTime
+            ? (gameState.endTime - gameState.startTime) / 1000
+            : 0}
+        bind:hiddenInput={currentInput}
+        bind:isInputFocused
+        oninput={handleInput}
+        onreset={handleReset}
+    />
+</main>
+
+<div>
+    <Footer />
+</div>
