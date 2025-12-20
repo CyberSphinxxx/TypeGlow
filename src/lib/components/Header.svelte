@@ -2,7 +2,7 @@
     import LoginButton from "./LoginButton.svelte";
     import { user } from "../stores/AuthStore";
     import { page } from "$app/stores";
-    import { Keyboard, Crown, Info, User } from "lucide-svelte";
+    import { Keyboard, Crown, Info, User, Settings } from "lucide-svelte";
 </script>
 
 <header
@@ -56,6 +56,18 @@
                 : 'text-gray-500 hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.8)]'}"
         >
             <Info size={20} />
+        </a>
+
+        <!-- Settings -->
+        <a
+            href="/settings"
+            title="Settings"
+            class="p-2 rounded-lg transition-all duration-300
+            {$page.url.pathname === '/settings'
+                ? 'text-cyan-400 drop-shadow-[0_0_8px_cyan]'
+                : 'text-gray-500 hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.8)]'}"
+        >
+            <Settings size={20} />
         </a>
     </nav>
 
