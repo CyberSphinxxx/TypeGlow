@@ -240,6 +240,9 @@
         disabled={typingComplete || charStates.length === 0}
         onfocus={() => (isInputFocused = true)}
         onblur={() => (isInputFocused = false)}
+        onpaste={(e) => e.preventDefault()}
+        ondrop={(e) => e.preventDefault()}
+        oncut={(e) => e.preventDefault()}
     />
 
     {#if !typingComplete && charStates.length > 0}
