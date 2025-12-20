@@ -7,7 +7,7 @@
 <Header />
 
 <main
-    class="flex-grow flex flex-col justify-center items-center w-full max-w-[1200px] relative z-10 p-5 mt-20"
+    class="flex-grow flex flex-col items-center w-full max-w-[1200px] relative z-10 p-5 pt-28"
 >
     <Leaderboard />
 </main>
