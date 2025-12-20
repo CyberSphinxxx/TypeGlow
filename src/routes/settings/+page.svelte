@@ -6,7 +6,10 @@
     import {
         smoothCaret,
         caretStyle,
+        fontFamily,
+        FONT_OPTIONS,
         type CaretStyle,
+        type FontFamily,
     } from "$lib/stores/settingsStore";
     import {
         Sun,
@@ -15,6 +18,7 @@
         VolumeX,
         Type,
         MousePointer2,
+        ALargeSmall,
     } from "lucide-svelte";
 
     const caretStyles: { value: CaretStyle; label: string }[] = [
@@ -37,6 +41,10 @@
 
     function setCaretStyle(style: CaretStyle) {
         caretStyle.set(style);
+    }
+
+    function setFontFamily(font: FontFamily) {
+        fontFamily.set(font);
     }
 </script>
 
@@ -222,6 +230,37 @@
                                         : 'bg-slate-700/50 text-slate-400 border border-slate-600/50 hover:bg-slate-700 hover:text-white'}"
                                 >
                                     {style.label}
+                                </button>
+                            {/each}
+                        </div>
+                    </div>
+
+                    <!-- Font Family -->
+                    <div
+                        class="bg-slate-800/30 rounded-xl border border-slate-700/50 p-4"
+                    >
+                        <div class="flex items-center gap-3 mb-4">
+                            <ALargeSmall class="w-5 h-5 text-cyan-400" />
+                            <div>
+                                <div class="text-white font-['JetBrains_Mono']">
+                                    Font Family
+                                </div>
+                                <div class="text-xs text-slate-500">
+                                    Choose your preferred monospace font
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            {#each FONT_OPTIONS as font}
+                                <button
+                                    onclick={() => setFontFamily(font.value)}
+                                    class="py-3 px-4 rounded-lg text-sm transition-all duration-200 text-left
+                                    {$fontFamily === font.value
+                                        ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 shadow-[0_0_10px_rgba(34,211,238,0.3)]'
+                                        : 'bg-slate-700/50 text-slate-400 border border-slate-600/50 hover:bg-slate-700 hover:text-white'}"
+                                    style="font-family: {font.stack}"
+                                >
+                                    {font.label}
                                 </button>
                             {/each}
                         </div>
