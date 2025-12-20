@@ -1,55 +1,99 @@
 <script lang="ts">
-    let { onselectlevel } = $props<{ onselectlevel: (level: string) => void }>();
-    
-    import LoginButton from './LoginButton.svelte';
-    import { user } from '../stores/AuthStore';
-    
-    let selectedLevel = $state<string | null>(null);
-
-    function selectLevel(level: string) {
-        selectedLevel = level;
-        onselectlevel(level);
-    }
+    import LoginButton from "./LoginButton.svelte";
+    import { user } from "../stores/AuthStore";
+    import { page } from "$app/stores";
+    import { Keyboard, Crown, Info, User } from "lucide-svelte";
 </script>
 
-<div class="fixed top-0 left-0 w-full pointer-events-none z-50">
+<header
+    class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-8 py-4 backdrop-blur-md bg-black/20 border-b border-white/10 transition-all duration-300"
+>
     <!-- Logo -->
-    <a href="https://github.com/CyberSphinxxx/TypeGlow" target="_blank" class="pointer-events-auto absolute top-5 left-5 no-underline">
-        <h1 class="m-0 text-3xl sm:text-[3rem] text-[rgb(255,226,59)] transition-colors duration-500 ease-out hover:text-[rgb(255,217,0)] hover:duration-500 hover:ease-in-out drop-shadow-[0_0_5px_gold]">
-            TypeGlow
+    <a href="/" class="no-underline group shrink-0">
+        <h1
+            class="m-0 text-2xl font-['JetBrains_Mono'] text-white tracking-tight"
+        >
+            Type<span
+                class="text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]"
+                >Glow</span
+            >
         </h1>
     </a>
 
+    <!-- Navigation (Centered Icons) -->
+    <nav class="absolute left-1/2 -translate-x-1/2 flex items-center gap-6">
+        <!-- Home -->
+        <a
+            href="/"
+            title="Home"
+            class="p-2 rounded-lg transition-all duration-300
+            {$page.url.pathname === '/'
+                ? 'text-cyan-400 drop-shadow-[0_0_8px_cyan]'
+                : 'text-gray-500 hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.8)]'}"
+        >
+            <Keyboard size={20} />
+        </a>
+
+        <!-- Leaderboard -->
+        <a
+            href="/leaderboard"
+            title="Leaderboard"
+            class="p-2 rounded-lg transition-all duration-300
+            {$page.url.pathname === '/leaderboard'
+                ? 'text-cyan-400 drop-shadow-[0_0_8px_cyan]'
+                : 'text-gray-500 hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.8)]'}"
+        >
+            <Crown size={20} />
+        </a>
+
+        <!-- About -->
+        <a
+            href="/about"
+            title="About"
+            class="p-2 rounded-lg transition-all duration-300
+            {$page.url.pathname === '/about'
+                ? 'text-cyan-400 drop-shadow-[0_0_8px_cyan]'
+                : 'text-gray-500 hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.8)]'}"
+        >
+            <Info size={20} />
+        </a>
+    </nav>
+
     <!-- User Profile / Login -->
-    <div class="pointer-events-auto absolute top-5 right-5 flex items-center gap-4">
+    <div class="flex items-center gap-4 shrink-0">
         {#if $user}
-            <div class="flex items-center gap-2">
+            <a
+                href="/profile"
+                title={$user.displayName || "Profile"}
+                class="relative p-1 rounded-full transition-all duration-300 hover:ring-2 hover:ring-cyan-500/50"
+            >
                 {#if $user.photoURL}
-                    <img src={$user.photoURL} alt="User Profile" class="w-10 h-10 rounded-full border-2 border-gold shadow-lg" />
+                    <img
+                        src={$user.photoURL}
+                        alt="User Profile"
+                        class="w-8 h-8 rounded-full border border-gray-600 shadow-sm"
+                    />
                 {:else}
-                    <div class="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center text-white border-2 border-gold shadow-lg">
-                        {$user.displayName ? $user.displayName[0] : 'U'}
+                    <div
+                        class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-xs text-white border border-gray-600"
+                    >
+                        {$user.displayName ? $user.displayName[0] : "U"}
                     </div>
                 {/if}
-            </div>
+                <!-- Online Dot -->
+                <div
+                    class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-gray-900"
+                ></div>
+            </a>
         {:else}
+            <a
+                href="#"
+                title="Sign In"
+                class="p-2 rounded-lg text-gray-500 hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.8)] transition-all duration-300"
+            >
+                <User size={20} />
+            </a>
             <LoginButton />
         {/if}
     </div>
-</div>
-
-<!-- Difficulty Levels - Centered relative to screen usually, or part of main flow? 
-     In original, it was div above container. 
-     I'll place it here but it needs to be positioned correctly in the flow.
-     If Header component is rendered at the top of +page.svelte, this div will be in flow. -->
-<div class="difficulty-levels text-center mb-5 -mt-[5%] select-none relative z-10 pointer-events-auto">
-    {#each ['Easy', 'Medium', 'Hard', 'Impossible'] as level}
-        <button 
-            class="level mx-[15px] text-[1.4rem] sm:text-[1.8rem] font-['Noto_Serif_Oriya'] text-[#fefefe] transition-colors duration-300 ease-out bg-[#282c34] rounded-[10px] border-none p-[5px] hover:text-gold hover:duration-300 hover:ease-in cursor-pointer {selectedLevel === level.toLowerCase() ? 'text-gold' : ''}"
-            data-level={level.toLowerCase()}
-            onclick={() => selectLevel(level.toLowerCase())}
-        >
-            {level}
-        </button>
-    {/each}
-</div>
+</header>
