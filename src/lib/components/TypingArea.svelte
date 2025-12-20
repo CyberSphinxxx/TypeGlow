@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { CharState } from "$lib/gameEngine";
+    import { fontFamily, FONT_OPTIONS } from "$lib/stores/settingsStore";
 
     let {
         targetText,
@@ -182,7 +183,7 @@
     <p
         id="targetText"
         bind:this={textRef}
-        class="text-3xl sm:text-4xl leading-relaxed tracking-wide font-['JetBrains_Mono'] relative z-10 transition-all {charStates.length ===
+        class="text-3xl sm:text-4xl leading-relaxed tracking-wide relative z-10 transition-all {charStates.length ===
         0
             ? 'text-slate-400 scale-90'
             : 'text-gray-500 scale-100'} {!isInputFocused &&
@@ -190,6 +191,8 @@
         !typingComplete
             ? 'duration-300 blur-[2px] opacity-50'
             : 'duration-0 blur-0 opacity-100'}"
+        style="font-family: {FONT_OPTIONS.find((f) => f.value === $fontFamily)
+            ?.stack || "'JetBrains Mono', monospace"}"
     >
         {#if charStates.length === 0}
             {targetText}
