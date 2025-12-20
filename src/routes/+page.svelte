@@ -19,6 +19,7 @@
     let quantity = $state(25); // Word count or time in seconds
     let punctuation = $state(false);
     let numbers = $state(false);
+    let remainingTime = $state(0); // For timer display in time mode
 
     $effect(() => {
         // Unlock audio context on first interaction
@@ -39,8 +40,10 @@
         const interval = setInterval(() => {
             if (!gameState.typingComplete && gameState.startTime) {
                 gameState = engine.updateLiveWPM();
+                // Update remaining time for timer display
+                remainingTime = engine.getRemainingTime();
             }
-        }, 1000);
+        }, 100); // Update more frequently for smoother timer
         return () => clearInterval(interval);
     });
 
@@ -57,6 +60,9 @@
             usePunctuation: punctuation,
             useNumbers: numbers,
         });
+
+        // Initialize remaining time for time mode
+        remainingTime = quantity;
 
         input?.focus();
     }
@@ -142,6 +148,8 @@
         testDuration={gameState.endTime && gameState.startTime
             ? (gameState.endTime - gameState.startTime) / 1000
             : 0}
+        {remainingTime}
+        {gameMode}
         bind:hiddenInput={currentInput}
         bind:isInputFocused
         oninput={handleInput}
