@@ -1,5 +1,73 @@
 @import 'tailwindcss';
 
+/* Theme Variables */
+:root,
+[data-theme="dark"] {
+    --bg-primary: #050505;
+    --bg-secondary: #111111;
+    --bg-card: rgba(15, 23, 42, 0.5);
+    --bg-input: rgba(31, 41, 55, 0.5);
+    --text-primary: #ffffff;
+    --text-secondary: #9ca3af;
+    --text-muted: #6b7280;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --accent-color: #22d3ee;
+    --accent-glow: rgba(34, 211, 238, 0.3);
+}
+
+[data-theme="light"] {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f1f5f9;
+    --bg-card: rgba(226, 232, 240, 0.8);
+    --bg-input: rgba(203, 213, 225, 0.5);
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --border-color: rgba(0, 0, 0, 0.15);
+    --accent-color: #0891b2;
+    --accent-glow: rgba(8, 145, 178, 0.2);
+}
+
+/* Global theme-aware overrides */
+[data-theme="light"] .text-white {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .text-gray-400,
+[data-theme="light"] .text-gray-500,
+[data-theme="light"] .text-gray-600 {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="light"] .text-gray-700 {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="light"] .bg-gray-800,
+[data-theme="light"] .bg-gray-800\/50,
+[data-theme="light"] .bg-gray-900\/40 {
+    background-color: var(--bg-card) !important;
+}
+
+[data-theme="light"] .border-gray-700,
+[data-theme="light"] .border-gray-700\/50,
+[data-theme="light"] .border-gray-800 {
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="light"] .text-cyan-400,
+[data-theme="light"] .text-cyan-500 {
+    color: var(--accent-color) !important;
+}
+
+[data-theme="light"] .bg-slate-900\/50 {
+    background-color: var(--bg-card) !important;
+}
+
+[data-theme="light"] .border-white\/10 {
+    border-color: var(--border-color) !important;
+}
+
 /* Hide scrollbars but keep scrolling */
 * {
     scrollbar-width: none; /* Firefox */
