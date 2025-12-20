@@ -102,6 +102,8 @@
                         wpm: gameState.wpm,
                         accuracy: gameState.accuracy,
                         timestamp: new Date(),
+                        mode: gameMode as "time" | "words",
+                        limit: quantity,
                     },
                     $user,
                 );
@@ -148,5 +150,5 @@
 </main>
 
 <div>
-    <Footer />
+    <Footer showKeybindHint={true} />
 </div>
