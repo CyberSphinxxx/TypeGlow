@@ -1,13 +1,31 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Scores collection - anyone can read, authenticated users can create with validation
     match /scores/{scoreId} {
       allow read: if true;
       allow create: if request.auth != null
+                    // Basic type validation
                     && request.resource.data.wpm is number
                     && request.resource.data.accuracy is number
-                    && request.resource.data.timestamp is timestamp;
+                    && request.resource.data.timestamp is timestamp
+                    // Anti-cheat: WPM sanity check (world record ~216 WPM)
+                    && request.resource.data.wpm >= 1
+                    && request.resource.data.wpm <= 250
+                    // Anti-cheat: Accuracy must be 0-100%
+                    && request.resource.data.accuracy >= 0
+                    && request.resource.data.accuracy <= 100
+                    // Anti-cheat: Valid game modes only
+                    && request.resource.data.mode in ['time', 'words']
+                    // Anti-cheat: Valid limits only
+                    && request.resource.data.limit in [10, 15, 25, 30, 50, 60, 100, 120];
       allow update, delete: if false;
+    }
+    
+    // Achievements collection - users can only read/write their own achievements
+    match /achievements/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null && request.auth.uid == userId;
     }
   }
 }
