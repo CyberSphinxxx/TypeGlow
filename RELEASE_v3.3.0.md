@@ -36,6 +36,17 @@ Unlock **13 achievements** across 3 categories as you improve your typing skills
 - 💾 **Persistent storage** - achievements saved to Firestore per user
 - 🎨 **Locked/Unlocked states** - see what you've earned and what's left to unlock
 
+### Font Options
+Customize your typing experience with **6 monospace fonts**:
+- **JetBrains Mono** (default)
+- **Fira Code**
+- **Source Code Pro**
+- **Roboto Mono**
+- **IBM Plex Mono**
+- **SF Mono** (system font)
+
+Go to Settings → Typing → Font Family to change your font!
+
 ---
 
 ## 🛡️ Anti-Cheat System
@@ -63,7 +74,10 @@ Unlock **13 achievements** across 3 categories as you improve your typing skills
 ### Modified Files
 - `src/routes/+page.svelte` - Achievement checking after game completion + anti-cheat validation
 - `src/routes/profile/+page.svelte` - Achievements section with badge grid
-- `src/lib/components/TypingArea.svelte` - Paste/drop/cut prevention
+- `src/routes/settings/+page.svelte` - Font Family selector UI
+- `src/lib/components/TypingArea.svelte` - Paste/drop/cut prevention + dynamic font family
+- `src/lib/stores/settingsStore.ts` - Font family store with 6 font options
+- `src/app.html` - Google Fonts imports
 - `firestore.rules` - Anti-cheat validation rules
 
 ---
